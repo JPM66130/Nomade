@@ -1,10 +1,10 @@
 name: API / AllRoad's
 
 on:
-  workflow_dispatch:   # Lancement manuel uniquement
+  workflow_dispatch:
 
 jobs:
-  build-test:
+  test-build:
     runs-on: ubuntu-latest
 
     steps:
