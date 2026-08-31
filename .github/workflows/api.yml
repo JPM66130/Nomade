@@ -1,4 +1,4 @@
-name: AllRoads API (manuel)
+name: API / AllRoad's
 
 on:
   workflow_dispatch:   # Lancement manuel uniquement
