@@ -1,25 +1,37 @@
-name: Tests manuels de l'application
+name: Tests API Nomade
 
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Récupération du dépôt
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Installation de Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
-      - name: Installation des dépendances
-        run: |
-          pip install --upgrade pip
-          pip install fastapi uvicorn
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
 
-      - name: Lancer les tests
-        run: |
-          pytest || echo "Aucun test trouvé"
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run tests
+      run: pytest --maxfail=1 --disable-warnings -q
+
+    - name: Test summary
+      if: always()
+      run: pytest --maxfail=1
