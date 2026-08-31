@@ -33,3 +33,5 @@ Les tests sont exécutés automatiquement à chaque push :
 
 ## 📂 Structure du projet
 
+![Tests](https://github.com/JPM66130/Nomade/actions/workflows/test-app.yml/badge.svg)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
