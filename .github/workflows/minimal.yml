@@ -9,4 +9,3 @@ jobs:
     steps:
       - name: Test ultra léger
         run: echo "Workflow exécuté avec succès."
-
