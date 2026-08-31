@@ -26,12 +26,17 @@ jobs:
       with:
         python-version: "3.11"
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+    - - name: Install dependencies
+  run: |
+    pip install -r requirements.txt
+    pip install pytest-cov
 
-    - name: Run tests
-      run: pytest --maxfail=1 --disable-warnings -q
+
+   - name: Run tests with coverage
+  run: pytest --maxfail=1 --disable-warnings --cov=./ --cov-report=xml
+
 
     - name: Test summary
       if: always()
       run: pytest --maxfail=1
+
