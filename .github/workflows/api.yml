@@ -19,6 +19,10 @@ jobs:
       - name: Installation des dépendances
         run: |
           pip install --upgrade pip
+          pip install fastapi uvicorn
+
+        run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Lancer les tests
