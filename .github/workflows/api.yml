@@ -21,10 +21,6 @@ jobs:
           pip install --upgrade pip
           pip install fastapi uvicorn
 
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
       - name: Lancer les tests
         run: |
           pytest || echo "Aucun test ou tests non configurés"
