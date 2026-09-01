@@ -1,6 +1,6 @@
 # Nomade bêta
 
-API FastAPI pour le calcul d’itinéraire, avec moteur de routage de secours, gestion des coûts et historique local.
+API FastAPI pour le calcul d’itinéraire voiture ou bus, avec moteur de routage de secours, gestion des coûts, historique local et arrêts bus sauvegardés.
 
 ## Prérequis
 
@@ -63,8 +63,8 @@ Le projet fonctionne en mode dégradé avec le fallback OSRM lorsque GraphHopper
 
 GraphHopper devient le moteur de routage prioritaire. En cas d’indisponibilité, le projet essaie ensuite ORS puis OSRM.
 
-- les profils vélo et voiture utilisent les véhicules GraphHopper correspondants
-- les profils camping-car, poids lourd et convoi exceptionnel utilisent actuellement le profil voiture, sans restrictions de gabarit spécifiques
+- les deux modes disponibles sont `voiture` et `bus`
+- le mode bus utilise actuellement le profil routier voiture ; les voies réservées et les contraintes spécifiques aux bus ne sont pas garanties
 
 ### Avec clé ORS réelle
 
@@ -76,6 +76,8 @@ Le géocodeur est réactivé et permet de convertir automatiquement une adresse 
 - `GET /itineraire/geocoder`
 - `GET /itineraire/compteur`
 - `GET /itineraire/`
+- `PUT /itineraire/{itineraire_id}/tournee`
+- `POST /itineraire/{itineraire_id}/arrets`
 - `GET /pays/`
 - `GET /stations/`
 - `GET /alertes/`
@@ -84,8 +86,9 @@ Le géocodeur est réactivé et permet de convertir automatiquement une adresse 
 
 - La clé ORS doit être une vraie clé valide ; les valeurs type `VOTRE_...`, `CHANGE_ME` ou `REMPLACEZ_PAR_VOTRE_CLE_ORS` sont rejetées.
 - Le token API doit être renseigné pour les appels protégés.
-- L’interface ne lance pas d’appels API sans token.
+- L’interface locale peut lancer des appels sans token ; une instance publique reste protégée.
 - Le fallback OSRM est la source de secours pour la route en mode sans clé ORS.
+- Les vingt tournées les plus récentes sont conservées. Une tournée peut être nommée par le conducteur et contenir jusqu’à vingt arrêts bus ; chaque arrêt conserve sa position GPS, sa précision et le sens de l’itinéraire.
 
 ## État actuel
 
@@ -116,7 +119,8 @@ En production multi-utilisateurs, préférez PostgreSQL et renseignez la chaîne
 
 1. Publiez ce dossier dans un dépôt GitHub privé ou public, sans `clé.env` ni `.env`.
 2. Dans Render, créez un service depuis ce dépôt et laissez Render détecter `render.yaml`.
-3. Saisissez les valeurs secrètes `ORS_API_KEY` et `GRAPHOPPER_API_KEY` dans Render. `API_ACCESS_TOKEN` est généré automatiquement.
-4. Une fois le déploiement terminé, vérifiez l'URL publique suivie de `/health`, puis ouvrez `/app/`.
+3. Le blueprint crée un disque persistant de 1 Go monté dans `/data` et configure `DATABASE_URL` pour conserver les tournées. Ce disque requiert l’offre Render Starter.
+4. Saisissez les valeurs secrètes `ORS_API_KEY` et `GRAPHOPPER_API_KEY` dans Render. `API_ACCESS_TOKEN` est généré automatiquement.
+5. Une fois le déploiement terminé, vérifiez l'URL HTTPS publique suivie de `/health`, puis ouvrez `/app/` sur le téléphone et autorisez la géolocalisation.
 
-Le niveau gratuit Render peut mettre le service en veille et sa base SQLite n'est pas persistante. Pour une bêta avec historique durable, configurez PostgreSQL via `DATABASE_URL` avant d'inviter largement des testeurs.
+Le niveau gratuit Render peut mettre le service en veille et sa base SQLite n'est pas persistante. Pour une bêta multi-utilisateur ou à fort volume, remplacez SQLite par PostgreSQL via `DATABASE_URL` avant d'inviter largement des testeurs.

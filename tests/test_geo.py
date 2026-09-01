@@ -31,7 +31,7 @@ class FakeClient:
 
 
 class GeoCalculTest(unittest.TestCase):
-    def test_graphhopper_uses_foot_vehicle_for_pedestrian_profile(self):
+    def test_graphhopper_uses_car_vehicle_for_bus_profile(self):
         original_api_key = geo._graphhopper_api_key
         original_urlopen = geo.urllib.request.urlopen
 
@@ -46,14 +46,14 @@ class GeoCalculTest(unittest.TestCase):
                 return b'{"paths":[{"distance":300,"time":240000,"instructions":[],"points":{"type":"LineString","coordinates":[[2.3,48.8],[2.31,48.81]]}}]}'
 
         def fake_urlopen(request, timeout):
-            self.assertIn("vehicle=foot", request.full_url)
+            self.assertIn("vehicle=car", request.full_url)
             return FakeResponse()
 
         geo._graphhopper_api_key = lambda: "test-key"
         geo.urllib.request.urlopen = fake_urlopen
         try:
-            result = geo._graphhopper_route(48.8, 2.3, 48.81, 2.31, "pieton")
-            self.assertEqual(result["profil_ors"], "foot")
+            result = geo._graphhopper_route(48.8, 2.3, 48.81, 2.31, "bus")
+            self.assertEqual(result["profil_ors"], "car")
         finally:
             geo._graphhopper_api_key = original_api_key
             geo.urllib.request.urlopen = original_urlopen

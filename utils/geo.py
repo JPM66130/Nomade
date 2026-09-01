@@ -16,23 +16,13 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 ORS_PROFILES = {
-    "pieton": "foot-walking",
-    "velo": "cycling-regular",
     "voiture": "driving-car",
-    "4x4": "driving-car",
-    "camping_car": "driving-car",
-    "poids_lourd": "driving-hgv",
-    "convoi_exceptionnel": "driving-hgv",
+    "bus": "driving-car",
 }
 
 GRAPHOPPER_VEHICLES = {
-    "pieton": "foot",
-    "velo": "bike",
     "voiture": "car",
-    "4x4": "car",
-    "camping_car": "car",
-    "poids_lourd": "car",
-    "convoi_exceptionnel": "car",
+    "bus": "car",
 }
 
 FERRY_ROUTES = [
@@ -282,7 +272,7 @@ def calcul_itineraire(
     lat2,
     lon2,
     vitesse_kmh=70,
-    profil="camping_car",
+    profil="voiture",
     contraintes=None,
 ):
     """

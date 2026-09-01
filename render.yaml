@@ -2,12 +2,19 @@ services:
   - type: web
     name: nomade-beta
     runtime: python
+    plan: starter
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
+    disk:
+      name: nomade-beta-data
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: ENVIRONMENT
         value: production
+      - key: DATABASE_URL
+        value: sqlite:////data/database.db
       - key: API_ACCESS_TOKEN
         generateValue: true
       - key: ORS_API_KEY

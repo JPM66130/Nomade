@@ -47,6 +47,7 @@
     .result strong { display:block; font:700 18px/1.1 'Space Grotesk',sans-serif; }
     .result span { color:var(--muted); font-size:11px; }
     .result .routing-warning { display:block; color:#a33d18; font-weight:700; margin-top:6px; }
+    .bus-stop-marker { color:#ffb067; font-size:25px; line-height:25px; text-shadow:0 1px 3px #05080c; transform-origin:center; }
     .odometer { margin-top:20px; padding:16px 0 0; border-top:1px solid var(--line); }
     .odometer strong { display:block; font:700 22px/1.1 'Space Grotesk',sans-serif; }
     .odometer span { color:var(--muted); font-size:13px; }
@@ -258,6 +259,28 @@
     }
     .map-hud-toggle-btn:hover, .map-hud-side-btn:hover, .map-hud-exit-btn:hover { transform:scale(1.04); }
 
+    .map-stop-control { pointer-events:auto; position:absolute; right:12px; bottom:52px; z-index:560; width:224px; }
+    .map-stop-toggle {
+      position:absolute; right:0; bottom:0; z-index:1; width:40px; min-height:40px; padding:0;
+      border:1px solid rgba(255,160,90,.6); border-radius:8px; background:rgba(4,7,12,.94); color:#ffa366;
+      box-shadow:0 4px 14px rgba(0,0,0,.7);
+    }
+    .map-stop-toggle::before {
+      content:''; display:block; width:15px; height:2px; margin:auto; border-radius:2px; background:currentColor;
+      box-shadow:0 -5px 0 currentColor, 0 5px 0 currentColor; transition:transform .2s ease;
+    }
+    .map-stop-toggle[aria-expanded="true"]::before { transform:rotate(90deg); }
+    .map-stop-drawer {
+      display:flex; align-items:center; gap:6px; padding:7px 48px 7px 8px; border:1px solid rgba(255,160,90,.45); border-radius:8px;
+      background:rgba(4,7,12,.94); box-shadow:0 4px 14px rgba(0,0,0,.7); backdrop-filter:blur(12px);
+      opacity:0; transform:translateX(16px); pointer-events:none; transition:opacity .2s ease, transform .2s ease;
+    }
+    .map-stop-control.is-open .map-stop-drawer { opacity:1; transform:translateX(0); pointer-events:auto; }
+    .map-stop-drawer input { min-width:0; min-height:29px; font-size:10px; }
+    .map-stop-actions { display:flex; align-items:center; gap:5px; }
+    .map-stop-actions span { white-space:nowrap; color:#ffa366; font:700 9px/1 'Space Grotesk',sans-serif; }
+    .map-stop-actions button { width:auto; min-height:29px; padding:0 7px; border-radius:5px; font-size:9px; }
+
     .map-side-panel {
       pointer-events:auto; position:absolute; top:10px; bottom:38px; width:140px;
       background:linear-gradient(180deg, rgba(3,6,10,0.55), rgba(8,13,20,0.6));
@@ -350,8 +373,43 @@
       width:min(205px, calc(100% - 24px)); padding:8px;
       border:1px solid rgba(255,255,255,.22); border-radius:8px;
       background:rgba(8,13,20,.9); box-shadow:0 8px 24px rgba(0,0,0,.38);
-      backdrop-filter:blur(12px); color:#fff;
+      backdrop-filter:blur(12px); color:#fff; transform:translateX(calc(100% - 40px));
+      transition:transform .2s ease;
     }
+    .map-view-control.is-open { transform:translateX(0); }
+    .map-options-toggle {
+      position:absolute; left:-41px; top:-1px; width:40px; min-height:40px; padding:0;
+      border:1px solid rgba(255,255,255,.22); border-radius:8px 0 0 8px;
+      background:rgba(8,13,20,.94); color:#ffa366;
+      box-shadow:0 8px 24px rgba(0,0,0,.38);
+    }
+    .map-options-toggle::before {
+      content:''; display:block; width:15px; height:2px; margin:auto; border-radius:2px; background:currentColor;
+      box-shadow:0 -5px 0 currentColor, 0 5px 0 currentColor; transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .map-options-toggle[aria-expanded="true"]::before { transform:rotate(90deg); box-shadow:0 -5px 0 currentColor, 0 5px 0 currentColor; }
+    .map-stop-control {
+      pointer-events:auto; position:absolute; right:6px; bottom:38px; z-index:560; width:208px;
+      padding:8px; border:1px solid rgba(255,255,255,.22); border-radius:8px; background:rgba(8,13,20,.94);
+      box-shadow:0 8px 24px rgba(0,0,0,.38); backdrop-filter:blur(12px); transform:translateX(calc(100% - 40px));
+      transition:transform .2s ease;
+    }
+    .map-stop-control.is-open { transform:translateX(0); }
+    .map-stop-toggle {
+      position:absolute; left:-41px; top:-1px; width:40px; min-height:40px; padding:0;
+      border:1px solid rgba(255,255,255,.22); border-radius:8px 0 0 8px; background:rgba(8,13,20,.94);
+      color:#00f5a0; box-shadow:0 8px 24px rgba(0,0,0,.38);
+    }
+    .map-stop-toggle::before {
+      content:''; display:block; width:13px; height:13px; margin:auto; border:2px solid currentColor; border-radius:50% 50% 50% 0;
+      box-shadow:inset 0 0 0 3px rgba(8,13,20,.94); transform:rotate(-45deg); transition:transform .2s ease;
+    }
+    .map-stop-toggle[aria-expanded="true"]::before { transform:rotate(135deg); }
+    .map-stop-drawer { display:grid; gap:6px; }
+    .map-stop-drawer input { min-height:30px; font-size:11px; }
+    .map-stop-actions { display:flex; align-items:center; gap:6px; }
+    .map-stop-actions span { flex:1; color:#a9b5c2; font:700 10px/1 'Space Grotesk',sans-serif; }
+    .map-stop-actions button { min-height:30px; width:auto; padding:0 9px; font-size:10px; }
     .map-view-control label {
       display:block; margin:0 0 5px; color:rgba(255,255,255,.7);
       font:700 9px/1 'Space Grotesk',sans-serif; letter-spacing:.08em; text-transform:uppercase;
@@ -529,18 +587,28 @@
       .side { padding:20px 16px; border-right:0; border-bottom:1px solid var(--line); overflow-y:auto; }
       #map { min-height:100vh; height:100vh; }
       h1 { font-size:28px; }
+      .map-hud-bar { bottom:calc(154px + env(safe-area-inset-bottom)); }
+      .map-side-panel {
+        top:auto; bottom:calc(8px + env(safe-area-inset-bottom)); width:190px; max-height:138px;
+        padding:7px 8px; justify-content:flex-start;
+      }
+      .map-side-panel.pos-left { left:8px; }
+      .map-side-panel.pos-right { right:8px; }
+      .map-side-panel .map-road-sub,
+      .map-side-panel .map-metric-item:nth-child(2),
+      .map-side-panel .map-metric-item:nth-child(4),
+      .map-side-panel .map-step-card { display:none; }
+      .map-side-panel .map-metrics-vertical { display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-top:3px; }
+      .map-side-panel .map-instruction-heading { font-size:12px; max-height:29px; overflow:hidden; }
+      .map-side-panel .map-nav-btn { display:none; }
       body.driver-mode .side {
-        position:fixed; inset:0; z-index:500; width:100%; height:100vh; max-height:none;
+        display:block !important; position:fixed; inset:0; z-index:500; width:100%; height:100vh; max-height:none;
         padding:0; border:none; background:transparent; backdrop-filter:none; box-shadow:none;
         pointer-events:none;
       }
+      body.driver-mode .app-tabs { display:grid; pointer-events:auto; }
       body.driver-mode .driver-panel {
-        pointer-events:auto;
-        position:absolute; left:8px; right:8px; top:8px; bottom:8px;
-        border-radius:18px; padding:12px;
-        display:flex; flex-direction:column; justify-content:space-between;
-        overflow-y:auto; background:rgba(3,6,10,0.94); border:1px solid rgba(255,255,255,.18);
-        box-shadow:0 10px 40px rgba(0,0,0,.9);
+        display:none !important;
       }
       body.driver-mode .driver-panel .driver-callout { grid-template-columns:54px 1fr; padding:8px 10px; margin-top:4px; }
       body.driver-mode .driver-panel .driver-turn { width:46px; height:46px; font-size:26px; }
@@ -653,13 +721,8 @@
           <fieldset>
             <legend>Véhicule</legend>
             <select id="profil" aria-label="Profil du véhicule">
-              <option value="pieton">Piéton</option>
-              <option value="voiture">Voiture</option>
-              <option value="camping_car" selected>Camping-car</option>
-              <option value="poids_lourd">Poids lourd</option>
-              <option value="velo">Vélo</option>
-              <option value="4x4">4x4</option>
-              <option value="convoi_exceptionnel">Convoi exceptionnel</option>
+              <option value="voiture" selected>Voiture</option>
+              <option value="bus">Bus</option>
             </select>
           </fieldset>
           <fieldset>
@@ -684,6 +747,7 @@
             <span class="fuel-note" id="fuel-note">Prix automatique du flux français.</span>
           </fieldset>
           <button id="submit" type="submit">Calculer l'itinéraire</button>
+          <button id="mark-stop" type="button" hidden>Marquer l'arrêt</button>
         </form>
         <div class="result" id="result"><strong>Prêt à partir</strong><span>Renseignez vos coordonnées.</span></div>
       </div>
@@ -777,6 +841,7 @@
     </aside>
     <section id="map" aria-label="Carte de l'itinéraire">
       <div class="map-view-control">
+          <button id="map-options-toggle" class="map-options-toggle" type="button" aria-label="Afficher les options de carte" aria-expanded="false" title="Options de carte"></button>
           <label for="map-perspective">Perspective</label>
           <select id="map-perspective" aria-label="Perspective de la carte">
             <option value="top">Vue de haut</option>
@@ -798,6 +863,17 @@
           <button class="map-hud-toggle-btn" id="map-toggle-hud" type="button">👁️ Masquer / Afficher</button>
           <button class="map-hud-side-btn" id="map-toggle-side" type="button">↔️ Côté : Gauche</button>
           <button class="map-hud-exit-btn" id="map-exit-hud" type="button">📌 Saisie</button>
+        </div>
+        <div class="map-stop-control" id="map-stop-control" hidden>
+          <button id="map-stop-toggle" class="map-stop-toggle" type="button" aria-label="Enregistrer un arrêt" aria-expanded="false" title="Enregistrer un arrêt"></button>
+          <div class="map-stop-drawer">
+            <input id="map-stop-name" type="text" maxlength="80" placeholder="Nom de la tournée" aria-label="Nom de la tournée">
+            <div class="map-stop-actions">
+              <span id="map-stop-count">0 / 20</span>
+              <button id="map-save-tournee" type="button">Sauvegarder</button>
+              <button id="map-mark-stop" type="button">Marquer l'arrêt</button>
+            </div>
+          </div>
         </div>
 
         <!-- Single Integrated GPS Window (Movable Left/Right) -->
@@ -867,7 +943,60 @@
     };
     const mapViewSelect = document.getElementById('map-view');
     const mapPerspectiveSelect = document.getElementById('map-perspective');
+    const mapViewControl = document.querySelector('.map-view-control');
+    const mapOptionsToggle = document.getElementById('map-options-toggle');
+    const mapStopControl = document.getElementById('map-stop-control');
+    const mapStopToggle = document.getElementById('map-stop-toggle');
+    const mapStopName = document.getElementById('map-stop-name');
+    const mapStopCount = document.getElementById('map-stop-count');
     let activeMapView = null;
+
+    mapOptionsToggle.addEventListener('click', () => {
+      const isOpen = mapViewControl.classList.toggle('is-open');
+      mapOptionsToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+    mapStopToggle.addEventListener('click', () => {
+      const isOpen = mapStopControl.classList.toggle('is-open');
+      mapStopToggle.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) mapStopName.focus();
+    });
+
+    function updateStopCount() {
+      mapStopCount.textContent = `${lastCalculatedData?.arrets?.length || 0} / 20`;
+    }
+
+    async function saveTourneeName() {
+      if (!lastCalculatedData?.itineraire_id) {
+        status.className = 'status error';
+        status.textContent = 'Calculez d’abord un itinéraire avant de nommer la tournée.';
+        return;
+      }
+      const nomTournee = mapStopName.value.trim();
+      if (!nomTournee) {
+        mapStopName.focus();
+        return;
+      }
+      const saveButton = document.getElementById('map-save-tournee');
+      saveButton.disabled = true;
+      try {
+        const response = await apiFetch(`/itineraire/${lastCalculatedData.itineraire_id}/tournee`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nom_tournee: nomTournee }),
+        });
+        const tournee = await response.json();
+        if (!response.ok) throw new Error(tournee.detail || 'Impossible d’enregistrer le nom de la tournée.');
+        lastCalculatedData.nom_tournee = tournee.nom_tournee;
+        status.className = 'status';
+        status.textContent = `Tournée « ${tournee.nom_tournee} » enregistrée.`;
+        await refreshHistory();
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message;
+      } finally {
+        saveButton.disabled = false;
+      }
+    }
 
     function setMapView(viewName) {
       const nextView = mapViews[viewName] || mapViews.real;
@@ -883,6 +1012,7 @@
     let routeLayer;
     let lastCalculatedData = null;
     let vehicleMarker = null;
+    let stopLayers = [];
     let activeAnimFrame = null;
     const form = document.getElementById('route-form');
     const button = document.getElementById('submit');
@@ -897,6 +1027,17 @@
     const fuelNote = document.getElementById('fuel-note');
     let destinationCountry = null;
     const isLocalApi = ['127.0.0.1', 'localhost', '::1'].includes(window.location.hostname);
+    function syncBusStopAction() {
+      const isBus = document.getElementById('profil').value === 'bus';
+      document.getElementById('mark-stop').hidden = !isBus;
+      mapStopControl.hidden = !isBus;
+      if (!isBus) {
+        mapStopControl.classList.remove('is-open');
+        mapStopToggle.setAttribute('aria-expanded', 'false');
+      }
+    }
+    document.getElementById('profil').addEventListener('change', syncBusStopAction);
+    syncBusStopAction();
     apiToken.value = sessionStorage.getItem('api_access_token') || '';
     apiToken.addEventListener('input', () => sessionStorage.setItem('api_access_token', apiToken.value));
     async function refreshFuelPrice(country = null) {
@@ -927,6 +1068,7 @@
     const odometerTrips = document.getElementById('odometer-trips');
     const historyList = document.getElementById('history-list');
     const trackingButton = document.getElementById('tracking');
+    const markStopButton = document.getElementById('mark-stop');
     const liveSpeed = document.getElementById('live-speed');
     const navLaunchButton = document.getElementById('nav-launch');
     const hudFill = document.querySelector('.hud-fill');
@@ -1087,6 +1229,98 @@
       if (token) headers.Authorization = `Bearer ${token}`;
       return fetch(url, { ...options, headers });
     }
+    function routeDirectionAt(latitude, longitude) {
+      const coordinates = lastCalculatedData?.geometry?.coordinates || [];
+      if (coordinates.length < 2) return null;
+      const radians = Math.PI / 180;
+      let closestSegment = null;
+      let minimumDistance = Infinity;
+      for (let index = 0; index < coordinates.length - 1; index += 1) {
+        const [startLongitude, startLatitude] = coordinates[index];
+        const [endLongitude, endLatitude] = coordinates[index + 1];
+        const referenceLatitude = ((startLatitude + endLatitude + latitude) / 3) * radians;
+        const pointX = (longitude - startLongitude) * Math.cos(referenceLatitude);
+        const pointY = latitude - startLatitude;
+        const segmentX = (endLongitude - startLongitude) * Math.cos(referenceLatitude);
+        const segmentY = endLatitude - startLatitude;
+        const segmentLength = segmentX ** 2 + segmentY ** 2 || 1;
+        const projection = Math.max(0, Math.min(1, (pointX * segmentX + pointY * segmentY) / segmentLength));
+        const distance = (pointX - projection * segmentX) ** 2 + (pointY - projection * segmentY) ** 2;
+        if (distance < minimumDistance) {
+          minimumDistance = distance;
+          closestSegment = { startLatitude, startLongitude, endLatitude, endLongitude };
+        }
+      }
+      if (!closestSegment) return null;
+      const deltaLongitude = (closestSegment.endLongitude - closestSegment.startLongitude) * radians;
+      const startLatitude = closestSegment.startLatitude * radians;
+      const endLatitude = closestSegment.endLatitude * radians;
+      const bearing = Math.atan2(
+        Math.sin(deltaLongitude) * Math.cos(endLatitude),
+        Math.cos(startLatitude) * Math.sin(endLatitude) - Math.sin(startLatitude) * Math.cos(endLatitude) * Math.cos(deltaLongitude),
+      ) / radians;
+      return (bearing + 360) % 360;
+    }
+    function clearStopMarkers() {
+      stopLayers.forEach(marker => map.removeLayer(marker));
+      stopLayers = [];
+    }
+    function showStopMarker(stop) {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="bus-stop-marker" style="transform:rotate(${stop.direction_deg}deg)">➤</div>`,
+        iconSize: [25, 25],
+        iconAnchor: [12, 12],
+      });
+      const marker = L.marker([stop.latitude, stop.longitude], { icon }).addTo(map);
+      marker.bindTooltip(`Arrêt bus · sens ${Math.round(stop.direction_deg)}°`);
+      stopLayers.push(marker);
+    }
+    async function markBusStop() {
+      if (lastCalculatedData?.profil !== 'bus' || !lastCalculatedData?.itineraire_id) {
+        status.className = 'status error';
+        status.textContent = 'Calculez d’abord un itinéraire bus.';
+        return;
+      }
+      if (!navigator.geolocation) {
+        status.className = 'status error';
+        status.textContent = 'La géolocalisation est nécessaire pour marquer un arrêt.';
+        return;
+      }
+      const stopButtons = [markStopButton, document.getElementById('map-mark-stop')];
+      stopButtons.forEach(button => { button.disabled = true; });
+      try {
+        const position = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true, maximumAge: 0, timeout: 10000,
+        }));
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const direction = routeDirectionAt(latitude, longitude);
+        if (direction === null) throw new Error('Le sens de circulation ne peut pas être déterminé sans géométrie routière.');
+        const stopName = `Arrêt ${((lastCalculatedData.arrets || []).length + 1)}`;
+        const response = await apiFetch(`/itineraire/${lastCalculatedData.itineraire_id}/arrets`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nom: stopName, latitude, longitude, direction_deg: direction, precision_m: position.coords.accuracy }),
+        });
+        const stop = await response.json();
+        if (!response.ok) throw new Error(stop.detail || 'Impossible d’enregistrer l’arrêt.');
+        showStopMarker(stop);
+        lastCalculatedData.arrets = [...(lastCalculatedData.arrets || []), stop];
+        updateStopCount();
+        status.className = 'status';
+        status.textContent = `${stop.nom} enregistré dans le sens ${Math.round(direction)}°.`;
+        await refreshHistory();
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = error.message || 'Position GPS indisponible. Vérifiez l’autorisation de localisation.';
+      } finally {
+        stopButtons.forEach(button => { button.disabled = false; });
+      }
+    }
+    markStopButton.addEventListener('click', markBusStop);
+    document.getElementById('map-mark-stop').addEventListener('click', markBusStop);
+    document.getElementById('map-save-tournee').addEventListener('click', saveTourneeName);
     function gpsDistanceKm(first, second) {
       const radians = value => value * Math.PI / 180;
       const earthRadius = 6371;
@@ -1149,6 +1383,7 @@
       const vehicleProfile = lastCalculatedData.profil || 'camping_car';
       const vehicleSvg = {
         voiture: `<path d="M9 43V21l5-8h8l5 8v22H9Z" fill="#3e9ad6" stroke="#0c1924" stroke-width="2"/><path d="M13 21h10v8H13Z" fill="#b9e7f8"/><path d="M11 31h14v8H11Z" fill="#d8e7ec"/><circle cx="11" cy="42" r="3"/><circle cx="25" cy="42" r="3"/><path d="M10 15h16" stroke="#fff" stroke-width="2"/>`,
+        bus: `<path d="M7 46V8h22v38H7Z" fill="#efb33f" stroke="#14202a" stroke-width="2"/><path d="M10 12h16v12H10Z" fill="#b7e5ee"/><path d="M10 28h16v12H10Z" fill="#d78434"/><circle cx="11" cy="44" r="3"/><circle cx="25" cy="44" r="3"/><path d="M7 21h22" stroke="#f7f1d7" stroke-width="2"/>`,
         '4x4': `<path d="M7 44V18l5-7h12l5 7v26H7Z" fill="#d89a37" stroke="#1b242a" stroke-width="2"/><path d="M11 17h14v9H11Z" fill="#c9edee"/><path d="M9 29h18v10H9Z" fill="#8a5c25"/><circle cx="10" cy="43" r="4"/><circle cx="26" cy="43" r="4"/><path d="M8 12h20" stroke="#f5e1a4" stroke-width="2"/>`,
         camping_car: `<path d="M6 46V10h24v36H6Z" fill="#f1f4f6" stroke="#0f1d28" stroke-width="2"/><path d="M9 13h18v9H9Z" fill="#3d6173"/><path d="M8 24h20v16H8Z" fill="#d8e0e3"/><path d="M11 27h7v8h-7zM20 27h5v12h-5z" fill="#6f9eaf"/><path d="M7 22h22" stroke="#e6853c" stroke-width="2"/><circle cx="10" cy="44" r="3"/><circle cx="26" cy="44" r="3"/><path d="M8 10h20" stroke="#fff" stroke-width="2"/>`,
         poids_lourd: `<path d="M5 46V7h18v39H5Z" fill="#efefed" stroke="#111d25" stroke-width="2"/><path d="M23 46V24h8v22H23Z" fill="#d44935" stroke="#111d25" stroke-width="2"/><path d="M25 27h4v7h-4z" fill="#9bd9e7"/><path d="M8 11h12v25H8Z" fill="#d9e0e3"/><circle cx="10" cy="44" r="3"/><circle cx="19" cy="44" r="3"/><circle cx="27" cy="44" r="3"/>`,
@@ -1156,7 +1391,7 @@
         velo: `<circle cx="11" cy="40" r="6" fill="none" stroke="#d9eaf1" stroke-width="2"/><circle cx="25" cy="40" r="6" fill="none" stroke="#d9eaf1" stroke-width="2"/><path d="M11 40l7-14 7 14-14 0 9-5 5-12M17 26h5M16 19l4 4" fill="none" stroke="#ffb067" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
         pieton: `<circle cx="18" cy="13" r="5" fill="#f2c6a0"/><path d="M18 19v13m0-8-8 6m8-6 8 5m-8 3-6 13m6-13 7 12" fill="none" stroke="#e7f0f7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`
       }[vehicleProfile] || '';
-      const vehicleLabel = { pieton:'Piéton', voiture:'Voiture', '4x4':'4x4', camping_car:'Camping-car', poids_lourd:'Poids lourd', convoi_exceptionnel:'Convoi exceptionnel', velo:'Vélo' }[vehicleProfile] || 'Véhicule';
+      const vehicleLabel = { voiture:'Voiture', bus:'Bus' }[vehicleProfile] || 'Véhicule';
       const markerHeight = vehicleProfile === 'velo' ? 44 : 52;
       const vehicleMarkup = `<div class="vehicle-art" role="img" aria-label="${vehicleLabel}"><svg width="36" height="${markerHeight}" viewBox="0 0 36 52" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2 3 50h30L18 2Z" fill="rgba(0,245,160,.16)"/>${vehicleSvg}<path d="M18 4v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>`;
 
@@ -1333,7 +1568,7 @@
       if (!response.ok) return;
       const data = await response.json();
       historyList.innerHTML = data.slice().reverse().slice(0, 8).map(item =>
-        `<div class="history-item"><strong>${item.depart} → ${item.arrivee}</strong><span>${Number(item.distance_km).toFixed(2)} km · ${formatDuration(item.duree_min)}</span></div>`
+        `<div class="history-item"><strong>${item.nom_tournee || 'Tournée sans nom'}</strong><span>${item.depart} → ${item.arrivee} · ${Number(item.distance_km).toFixed(2)} km · ${formatDuration(item.duree_min)} · ${(item.arrets || []).length} arrêt(s)</span></div>`
       ).join('') || '<span>Aucun trajet enregistré.</span>';
     }
     geocodeButton.addEventListener('click', async () => {
@@ -1383,6 +1618,11 @@
         if (!response.ok) throw new Error(`Erreur API (${response.status})`);
         const data = await response.json();
         lastCalculatedData = data;
+        clearStopMarkers();
+        mapStopControl.classList.remove('is-open');
+        mapStopToggle.setAttribute('aria-expanded', 'false');
+        mapStopName.value = '';
+        updateStopCount();
         const ferry = data.ferry ? ` · ${data.ferry.nom}` : '';
         const cost = data.estimation_cout;
         const sourceLabel = { openrouteservice:'OpenRouteService', osrm_fallback:'OSRM (secours)', haversine_fallback:'Estimation directe' }[data.source_routage] || data.source_routage;

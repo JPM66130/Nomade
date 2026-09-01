@@ -8,6 +8,7 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import inspect, text
 from dotenv import load_dotenv
 from db import Base, engine
 from routers import pays, stations, spots, parkings, peages, restrictions, alertes, itineraires
@@ -57,6 +58,16 @@ async def protect_api(request: Request, call_next):
     return await call_next(request)
 
 Base.metadata.create_all(bind=engine)
+if engine.dialect.name == "sqlite" and "arrets" in inspect(engine).get_table_names():
+    stop_columns = {column["name"] for column in inspect(engine).get_columns("arrets")}
+    if "nom" not in stop_columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE arrets ADD COLUMN nom VARCHAR NOT NULL DEFAULT 'Arrêt'"))
+if engine.dialect.name == "sqlite" and "trajet_details" in inspect(engine).get_table_names():
+    trip_detail_columns = {column["name"] for column in inspect(engine).get_columns("trajet_details")}
+    if "nom_tournee" not in trip_detail_columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE trajet_details ADD COLUMN nom_tournee VARCHAR NOT NULL DEFAULT 'Tournée sans nom'"))
 
 app.include_router(pays.router)
 app.include_router(stations.router)
