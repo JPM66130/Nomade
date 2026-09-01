@@ -17,7 +17,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
@@ -26,15 +26,11 @@ jobs:
       with:
         python-version: "3.11"
 
-    - - name: Install dependencies
-  run: |
-    pip install -r requirements.txt
-    pip install pytest-cov
+    - name: Install dependencies
+      run: pip install -r requirements-dev.txt
 
-
-   - name: Run tests with coverage
-  run: pytest --maxfail=1 --disable-warnings --cov=./ --cov-report=xml
-
+    - name: Run tests with coverage
+      run: pytest --maxfail=1 --disable-warnings --cov=./ --cov-report=xml
 
     - name: Test summary
       if: always()
