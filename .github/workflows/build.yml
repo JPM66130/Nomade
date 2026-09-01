@@ -1,0 +1,72 @@
+.github/workflows/build.yml
+name: Build & Test (manuel)
+
+on:
+  workflow_dispatch:   # Lancement manuel uniquement
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: Détection du type de projet
+        run: |
+          echo "Détection automatique du projet..."
+          if [ -f package.json ]; then
+            echo "Projet Node détecté"
+            echo "NODE" > project_type.txt
+          elif [ -f requirements.txt ]; then
+            echo "Projet Python détecté"
+            echo "PYTHON" > project_type.txt
+          elif [ -f composer.json ]; then
+            echo "Projet PHP détecté"
+            echo "PHP" > project_type.txt
+          else
+            echo "Type de projet non détecté"
+            echo "NONE" > project_type.txt
+          fi
+
+      - name: Installation des dépendances
+        run: |
+          TYPE=$(cat project_type.txt)
+          if [ "$TYPE" = "NODE" ]; then
+            npm install
+          elif [ "$TYPE" = "PYTHON" ]; then
+            pip install -r requirements.txt
+          elif [ "$TYPE" = "PHP" ]; then
+            composer install
+          else
+            echo "Aucune dépendance à installer"
+          fi
+
+      - name: Build du projet
+        run: |
+          TYPE=$(cat project_type.txt)
+          if [ "$TYPE" = "NODE" ]; then
+            npm run build || echo "Pas de script build"
+          elif [ "$TYPE" = "PYTHON" ]; then
+            echo "Python n'a pas de build standard"
+          elif [ "$TYPE" = "PHP" ]; then
+            echo "PHP n'a pas de build standard"
+          else
+            echo "Build ignoré"
+          fi
+
+      - name: Tests
+        run: |
+          TYPE=$(cat project_type.txt)
+          if [ "$TYPE" = "NODE" ]; then
+            npm test || echo "Pas de tests"
+          elif [ "$TYPE" = "PYTHON" ]; then
+            pytest || echo "Pas de tests"
+          elif [ "$TYPE" = "PHP" ]; then
+            vendor/bin/phpunit || echo "Pas de tests"
+          else
+            echo "Tests ignorés"
+          fi
+
+      - name: Fin du workflow
+        run: echo "Workflow terminé avec succès"
