@@ -80,5 +80,5 @@ Le dépôt inclut un fichier `render.yaml` à la racine pour créer un **Web Ser
 4. Lancer le déploiement
 
 Configuration utilisée :
-- Build : `pip install --upgrade pip && pip install fastapi uvicorn`
+- Build : `pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install fastapi uvicorn; fi`
 - Start : `uvicorn main:app --host 0.0.0.0 --port $PORT`
