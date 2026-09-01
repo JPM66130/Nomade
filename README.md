@@ -65,3 +65,20 @@ Les tests sont exécutés automatiquement à chaque push :
 ### 🧭 Géocodage
 `GET /geocode?query=adresse`
 → Convertit une adresse en coordonnées GPS.
+
+---
+
+## ☁️ Déploiement sur Render (Blueprint)
+
+Le dépôt inclut un fichier `render.yaml` à la racine pour créer un **Web Service** Render.
+
+1. Ouvrir Render : **New + → Blueprint**
+2. Sélectionner le repo `JPM66130/Nomade`
+3. Renseigner :
+   - **Branch** : `main`
+   - **Blueprint Path** : `render.yaml`
+4. Lancer le déploiement
+
+Configuration utilisée :
+- Build : `pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install fastapi uvicorn; fi`
+- Start : `uvicorn main:app --host 0.0.0.0 --port $PORT`
