@@ -7,6 +7,60 @@ Elle fournit des données sur les stations, spots, parkings, alertes et itinéra
 
 ---
 
+## ⚙️ Installation
+
+### Prérequis
+- Python 3.11+
+- pip
+
+### Étapes
+1. Cloner le dépôt
+2. Installer les dépendances :
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ Démarrage en local
+
+Lancer l’API avec Uvicorn :
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+API accessible sur : `http://localhost:8000`
+
+---
+
+## 🐳 Déploiement Docker
+
+### Avec Docker
+```bash
+docker build -t nomade-api .
+docker run --env-file .env -p 8000:8000 nomade-api
+```
+
+### Avec Docker Compose
+```bash
+docker compose up --build
+```
+
+---
+
+## 🚀 Déploiement en production
+
+Recommandations :
+- Utiliser `ENVIRONMENT=production`
+- Définir les variables d’environnement via l’infrastructure (et non en dur)
+- Placer l’API derrière un reverse proxy (Nginx/Caddy) avec HTTPS
+- Mettre en place la supervision (logs, santé, alertes)
+- Conserver les tests CI activés avant toute mise en production
+
+---
+
 ## 🚀 Fonctionnalités principales
 
 - Calcul d’itinéraires selon le type de véhicule  
