@@ -15,7 +15,7 @@
     }
     * { box-sizing:border-box; }
     html, body { margin:0; width:100%; height:100%; overflow:hidden; color:var(--ink); background:var(--bg-strong); font-family:'DM Sans',sans-serif; }
-    .shell { width:100vw; height:100vh; min-height:100vh; display:grid; grid-template-columns:160px 1fr; }
+    .shell { width:100vw; height:100vh; height:100dvh; min-height:100vh; min-height:100dvh; display:grid; grid-template-columns:160px 1fr; }
     .side { padding:6px 6px; background:linear-gradient(180deg, #10181f 0%, #0c1217 100%); border-right:1px solid var(--line); overflow-y:auto; }
     .kicker { display:none; }
     .chip { display:none; }
@@ -422,7 +422,7 @@
       .map-view-control { top:8px; right:8px; width:174px; padding:6px; }
       .map-view-control select { min-height:28px; font-size:10px; }
     }
-    #map { min-height:100vh; height:100vh; background:#dfe7e3; }
+    #map { min-height:100vh; min-height:100dvh; height:100vh; height:100dvh; background:#dfe7e3; }
     body.driver-mode .shell { grid-template-columns:1fr; }
     body.driver-mode .side { display:none !important; }
     body.driver-mode .intro,
@@ -583,23 +583,31 @@
     }
     @media (max-width:760px) and (orientation: portrait) {
       html, body { overflow:hidden; }
-      .shell { display:block; width:100%; height:100vh; }
+      .shell { display:block; width:100%; height:100vh; height:100dvh; min-height:100svh; }
       .side { padding:20px 16px; border-right:0; border-bottom:1px solid var(--line); overflow-y:auto; }
-      #map { min-height:100vh; height:100vh; }
+      #map { min-height:100svh; height:100dvh; }
       h1 { font-size:28px; }
-      .map-hud-bar { bottom:calc(154px + env(safe-area-inset-bottom)); }
+      .map-hud-bar { bottom:calc(96px + env(safe-area-inset-bottom)); max-width:calc(100vw - 16px); }
       .map-side-panel {
-        top:auto; bottom:calc(8px + env(safe-area-inset-bottom)); width:190px; max-height:138px;
-        padding:7px 8px; justify-content:flex-start;
+        top:auto; bottom:calc(8px + env(safe-area-inset-bottom)); left:8px; right:8px; width:auto; max-height:none;
+        min-height:72px; padding:7px 9px; display:grid; grid-template-columns:minmax(0, 1fr) auto; grid-template-rows:auto auto;
+        column-gap:8px; row-gap:4px; align-items:center;
       }
-      .map-side-panel.pos-left { left:8px; }
-      .map-side-panel.pos-right { right:8px; }
+      .map-stop-control { right:8px; bottom:calc(88px + env(safe-area-inset-bottom)); width:min(208px, calc(100vw - 16px)); }
+      .map-stop-drawer { max-width:calc(100vw - 56px); }
+      .map-side-panel.pos-left, .map-side-panel.pos-right { left:8px; right:8px; }
+      .map-side-panel > :first-child { min-width:0; }
       .map-side-panel .map-road-sub,
       .map-side-panel .map-metric-item:nth-child(2),
       .map-side-panel .map-metric-item:nth-child(4),
       .map-side-panel .map-step-card { display:none; }
-      .map-side-panel .map-metrics-vertical { display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-top:3px; }
+      .map-side-panel .map-panel-top-row { margin:0; }
+      .map-side-panel .map-turn-large { width:28px; height:28px; font-size:17px; }
+      .map-side-panel .map-speedometer-mini { padding:2px 4px; }
       .map-side-panel .map-instruction-heading { font-size:12px; max-height:29px; overflow:hidden; }
+      .map-side-panel .map-metrics-vertical { display:grid; grid-template-columns:repeat(2, 68px); gap:3px; margin:0; }
+      .map-side-panel .map-metric-item { padding:4px 5px; }
+      .map-side-panel > :last-child { grid-column:1 / -1; }
       .map-side-panel .map-nav-btn { display:none; }
       body.driver-mode .side {
         display:block !important; position:fixed; inset:0; z-index:500; width:100%; height:100vh; max-height:none;
@@ -623,15 +631,15 @@
     }
     @media (max-height: 520px) or (orientation: landscape) and (max-width: 950px) {
       html, body { overflow:hidden; }
-      .shell { display:block; width:100vw; height:100vh; position:relative; }
-      #map { width:100vw; height:100vh; position:absolute; inset:0; z-index:1; }
+      .shell { display:block; width:100vw; height:100vh; height:100dvh; position:relative; }
+      #map { width:100vw; height:100vh; height:100dvh; position:absolute; inset:0; z-index:1; }
       .side { display:block; background:transparent; border:none; padding:0; overflow:visible; }
       body.driver-mode .side {
         position:absolute; inset:0; z-index:500; pointer-events:none;
       }
       body.driver-mode .driver-panel {
         pointer-events:auto;
-        position:absolute; left:12px; top:12px; bottom:12px; width:340px; max-width:45vw;
+        position:absolute; left:12px; top:12px; bottom:12px; width:340px; max-width:45vw; max-height:calc(100dvh - 24px);
         border-radius:16px; padding:10px 12px;
         display:flex; flex-direction:column; justify-content:space-between;
         overflow-y:auto; background:rgba(3,6,10,0.92); border:1px solid rgba(255,255,255,.2);
