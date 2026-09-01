@@ -65,3 +65,22 @@ Les tests sont exécutés automatiquement à chaque push :
 ### 🧭 Géocodage
 `GET /geocode?query=adresse`
 → Convertit une adresse en coordonnées GPS.
+
+---
+
+## 🚀 Déploiement sur Render
+
+L'API AllRoad's peut être déployée gratuitement sur [Render.com](https://render.com) en quelques minutes.
+
+👉 **[Consulter le guide complet de déploiement](GUIDE_DEPLOYMENT_RENDER.md)**
+
+### Déploiement rapide
+
+1. Créer un compte sur [render.com](https://render.com)
+2. Connecter votre compte GitHub
+3. Sélectionner le dépôt `JPM66130/Nomade`
+4. Render détecte automatiquement le `Dockerfile`
+5. Cliquer sur **"Create Web Service"**
+6. ✅ Votre API est en ligne !
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
