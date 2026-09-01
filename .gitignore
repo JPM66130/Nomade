@@ -1,0 +1,20 @@
+# Secrets
+clé.env
+.env
+.env.*
+
+# Environnement Python
+.venv/
+venv/
+
+# Cache et fichiers générés
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Base de données locale
+database.db
+*.sqlite
+*.sqlite3
+fuel_prices_cache.json
+fuel_prices_eu_cache.json

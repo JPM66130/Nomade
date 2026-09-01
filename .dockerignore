@@ -1,0 +1,15 @@
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.py[cod]
+.env
+.env.*
+clé.env
+database.db
+*.sqlite
+*.sqlite3
+fuel_prices_cache.json
+fuel_prices_eu_cache.json
+tests
