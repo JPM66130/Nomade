@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-import main
+import api.main as main
 import routers.itineraires as itineraires_router
 from db import Base, get_db
 

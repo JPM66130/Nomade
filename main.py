@@ -1,140 +1,64 @@
-from pathlib import Path
-from collections import defaultdict, deque
-import hmac
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+import json
+import uvicorn
 import os
-import threading
-import time
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import inspect, text
-from dotenv import load_dotenv
-
-from api import pays, stations, spots, parkings, peages, restrictions, alertes, itineraires
-from db import Base, engine
-
-
-# ---------------------------------------------------------
-# 🔧 CONFIGURATION DE L’API
-# ---------------------------------------------------------
-app = FastAPI(title="Nomade bêta")
-
-env_path = Path(__file__).parent / "clé.env"
-load_dotenv(env_path)
-load_dotenv(Path(__file__).parent / ".env")
-
-if env_path.is_file():
-    with env_path.open(encoding="utf-8") as env_file:
-        API_ACCESS_TOKEN = next(
-            (line.split("=", 1)[1].strip() for line in env_file if line.startswith("API_ACCESS_TOKEN=")),
-            None,
-        )
-
-API_ACCESS_TOKEN = os.getenv("API_ACCESS_TOKEN")
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
-
-if ENVIRONMENT == "production" and not API_ACCESS_TOKEN:
-    raise RuntimeError("API_ACCESS_TOKEN est obligatoire en production")
-
-
-# ---------------------------------------------------------
-# 🔐 CODE DÉVELOPPEUR (accès temporaire)
-# ---------------------------------------------------------
-CODE_DEV = "3647"   # ton code développeur
-
-
-# ---------------------------------------------------------
-# 🔐 MIDDLEWARE GLOBAL — Sécurité + accès développeur
-# ---------------------------------------------------------
-RATE_LIMIT_PER_MINUTE = 60
-rate_limit_lock = threading.Lock()
-request_times = defaultdict(deque)
-
-public_paths = {"/health", "/app", "/"}
-
-@app.middleware("http")
-async def global_security(request: Request, call_next):
-    client_host = request.client.host
-    path = request.url.path
-
-    # 1️⃣ Accès développeur : bypass total
-    if request.query_params.get("dev") == CODE_DEV:
-        return await call_next(request)
-
-    # 2️⃣ Accès local (localhost)
-    is_local_request = client_host in {"127.0.0.1", "::1"}
-
-    # 3️⃣ Vérification du token (production)
-    if API_ACCESS_TOKEN and not is_local_request and path not in public_paths:
-        authorization = request.headers.get("Authorization", "")
-        supplied_token = authorization.removeprefix("Bearer ").strip()
-
-        if not hmac.compare_digest(supplied_token.encode("utf-8"), API_ACCESS_TOKEN.encode("utf-8")):
-            return JSONResponse({"detail": "Token d'accès requis"}, status_code=401)
-
-    # 4️⃣ Rate-limit
-    if not is_local_request and path not in public_paths:
-        now = time.monotonic()
-        with rate_limit_lock:
-            recent_requests = request_times[client_host]
-            while recent_requests and recent_requests[0] <= now - 60:
-                recent_requests.popleft()
-
-            if len(recent_requests) >= RATE_LIMIT_PER_MINUTE:
-                return JSONResponse({"detail": "Trop de requêtes. Réessayez dans une minute."}, status_code=429)
-
-            recent_requests.append(now)
-
-    return await call_next(request)
-
-
-# ---------------------------------------------------------
-# 🟪 MISE À JOUR AUTOMATIQUE DES TABLES SQLITE
-# ---------------------------------------------------------
-if engine.dialect.name == "sqlite" and "arrets" in inspect(engine).get_table_names():
-    stop_columns = {column["name"] for column in inspect(engine).get_columns("arrets")}
-    if "nom" not in stop_columns:
-        with engine.begin() as connection:
-            connection.execute(text("ALTER TABLE arrets ADD COLUMN nom VARCHAR NOT NULL DEFAULT 'Arrêt'"))
-
-if engine.dialect.name == "sqlite" and "trajet_details" in inspect(engine).get_table_names():
-    trip_detail_columns = {column["name"] for column in inspect(engine).get_columns("trajet_details")}
-    if "nom_tournee" not in trip_detail_columns:
-        with engine.begin() as connection:
-            connection.execute(text("ALTER TABLE trajet_details ADD COLUMN nom_tournee VARCHAR NOT NULL DEFAULT 'Tournee'"))
-
-
-# ---------------------------------------------------------
-# 📦 ROUTERS
-# ---------------------------------------------------------
-app.include_router(pays.router)
-app.include_router(stations.router)
-app.include_router(spots.router)
-app.include_router(parkings.router)
-app.include_router(peages.router)
-app.include_router(restrictions.router)
-app.include_router(alertes.router)
-app.include_router(itineraires.router)
-
-
-# ---------------------------------------------------------
-# 🌐 FRONTEND
-# ---------------------------------------------------------
-app.mount(
-    "/app",
-    StaticFiles(directory=Path(__file__).parent / "frontend", html=True),
-    name="frontend",
+app = FastAPI(
+    title="AllRoads API",
+    description="API Nomade (version stable)",
+    version="1.0"
 )
 
+# --- CORS ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# ---------------------------------------------------------
-# 🏠 ROUTES DE BASE
-# ---------------------------------------------------------
-@app.get("/")
-def home():
-    return {"message": "Nomade bêta opérationnelle"}
+# --- Chargement des données ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "data", "stations.json")
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+def load_stations():
+    with open(DATA_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+STATIONS = load_stations()
+
+# --- ROUTES ---
+
+@app.get("/status")
+def status():
+    return {"status": "OK", "message": "Nomade opérationnelle"}
+
+@app.get("/stations")
+def get_stations(dev: int = Query(None)):
+    if dev == 3647:
+        return {"status": "OK", "stations": STATIONS}
+    return {"status": "ERROR", "message": "Paramètre dev incorrect ou manquant"}
+
+@app.get("/station/{station_id}")
+def get_station(station_id: int, dev: int = Query(None)):
+    if dev != 3647:
+        return {"status": "ERROR", "message": "Paramètre dev incorrect ou manquant"}
+
+    for s in STATIONS:
+        if s["id"] == station_id:
+            return {"status": "OK", "station": s}
+    return {"status": "ERROR", "message": "Station introuvable"}
+
+@app.get("/proche")
+def get_proche(lat: float, lon: float, dev: int = Query(None)):
+    if dev != 3647:
+        return {"status": "ERROR", "message": "Paramètre dev incorrect ou manquant"}
+
+    # Algo simplifié (distance réelle plus tard)
+    return {"status": "OK", "stations": STATIONS}
+
+# --- Lancement local ---
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "nom": "Aire de Perpignan Nord",
+        "ville": "Perpignan",
+        "lat": 42.740,
+        "lon": 2.895
+    },
+    {
+        "id": 2,
+        "nom": "Aire d'Ille-sur-Têt",
+        "ville": "Ille-sur-Têt",
+        "lat": 42.670,
+        "lon": 2.620
+    },
+    {
+        "id": 3,
+        "nom": "Aire de Narbonne Sud",
+        "ville": "Narbonne",
+        "lat": 43.160,
+        "lon": 3.000
+    }
+]
