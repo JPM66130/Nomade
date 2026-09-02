@@ -1,4 +1,3 @@
-# main.py — Nomade bêta
 from pathlib import Path
 from collections import defaultdict, deque
 import hmac
@@ -52,7 +51,7 @@ RATE_LIMIT_PER_MINUTE = 60
 rate_limit_lock = threading.Lock()
 request_times = defaultdict(deque)
 
-public_paths = {"/health", "/app", "/"}  # routes publiques
+public_paths = {"/health", "/app", "/"}
 
 @app.middleware("http")
 async def global_security(request: Request, call_next):
@@ -67,15 +66,15 @@ async def global_security(request: Request, call_next):
     is_local_request = client_host in {"127.0.0.1", "::1"}
 
     # 3️⃣ Vérification du token (production)
-    if API_ACCESS_TOKEN and not is_local_request and not path.startswith("/app") and path not in public_paths:
+    if API_ACCESS_TOKEN and not is_local_request and path not in public_paths:
         authorization = request.headers.get("Authorization", "")
         supplied_token = authorization.removeprefix("Bearer ").strip()
 
         if not hmac.compare_digest(supplied_token.encode("utf-8"), API_ACCESS_TOKEN.encode("utf-8")):
-            return JSONResponse({"detail": "Token d'accès requis."}, status_code=401)
+            return JSONResponse({"detail": "Token d'accès requis"}, status_code=401)
 
-    # 4️⃣ Rate‑limit
-    if not is_local_request and not path.startswith("/app") and path not in public_paths:
+    # 4️⃣ Rate-limit
+    if not is_local_request and path not in public_paths:
         now = time.monotonic()
         with rate_limit_lock:
             recent_requests = request_times[client_host]
@@ -91,7 +90,7 @@ async def global_security(request: Request, call_next):
 
 
 # ---------------------------------------------------------
-# 🗄️ MISE À JOUR AUTOMATIQUE DES TABLES SQLITE
+# 🟪 MISE À JOUR AUTOMATIQUE DES TABLES SQLITE
 # ---------------------------------------------------------
 if engine.dialect.name == "sqlite" and "arrets" in inspect(engine).get_table_names():
     stop_columns = {column["name"] for column in inspect(engine).get_columns("arrets")}
