@@ -41,7 +41,7 @@ if ENVIRONMENT == "production" and not API_ACCESS_TOKEN:
 # ---------------------------------------------------------
 # 🔐 CODE DÉVELOPPEUR (accès temporaire)
 # ---------------------------------------------------------
-CODE_DEV = "3647"   # change ici ton code perso
+CODE_DEV = "3647"   # ton code développeur
 
 
 # ---------------------------------------------------------
@@ -134,7 +134,6 @@ app.mount(
 @app.get("/")
 def home():
     return {"message": "Nomade bêta opérationnelle"}
-
 
 @app.get("/health")
 def health():
