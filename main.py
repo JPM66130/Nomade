@@ -11,8 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import inspect, text
 from dotenv import load_dotenv
 
+from api import pays, stations, spots, parkings, peages, restrictions, alertes, itineraires
 from db import Base, engine
-from outers import pays, stations, spots, parkings, peages, restrictions, alertes, itineraires
 
 
 # ---------------------------------------------------------
