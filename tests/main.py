@@ -13,22 +13,22 @@ async def access_control(request: Request, call_next):
 
     path = request.url.path
 
-    # 1. Routes publiques
+    # Routes publiques
     public_paths = [
         "/status",
         "/stations",
-        "/station",
+        "/station/",
     ]
 
     if any(path.startswith(p) for p in public_paths):
         return await call_next(request)
 
-    # 2. Mode développeur
+    # Mode développeur
     dev = request.query_params.get("dev")
     if dev == "3647":
         return await call_next(request)
 
-    # 3. Token Render
+    # Token Render
     token_env = os.getenv("API_ACCESS_TOKEN")
     token_user = request.query_params.get("token")
 
@@ -54,16 +54,13 @@ async def access_control(request: Request, call_next):
 def status():
     return {"message": "Nomade bêta opérationnelle"}
 
-
 @app.get("/stations")
 def stations():
     return {"message": "Liste des stations (exemple)"}
 
-
 @app.get("/station/{id}")
 def station(id: int):
     return {"message": f"Station {id}"}
-
 
 @app.get("/proche")
 def proche(lat: float, lon: float):
