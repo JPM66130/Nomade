@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 app = FastAPI(
     title="AllRoad’s API",
-    description="API de calcul et affichage d’itinéraires pour l’application AllRoad’s",
+    description="API de calcul et affichage d’itinéraire",
     version="1.0.0"
 )
 
@@ -13,7 +13,6 @@ def home():
 
 @app.get("/route")
 def get_route():
-    # Exemple d’itinéraire simple (Ille-sur-Têt → Thuir)
     return {
         "route_name": "Ille-sur-Têt → Thuir",
         "coordinates": [
